@@ -1,7 +1,7 @@
 import React from 'react';
 import Typography from '@material-ui/core/Typography';
 
-const MainView = () => {
+const Snippet = () => {
   return (
     <>
       <Typography paragraph>TODO</Typography>
@@ -9,4 +9,4 @@ const MainView = () => {
   );
 };
 
-export default MainView;
+export default Snippet;

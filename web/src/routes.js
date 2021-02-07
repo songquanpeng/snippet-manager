@@ -2,7 +2,7 @@ import React from 'react';
 import { Navigate } from 'react-router-dom';
 import Layout from './components/Layout';
 import NotFoundView from './views/NotFoundView';
-import MainView from './views/MainView';
+import Snippet from './components/Snippet';
 
 const routes = [
   {
@@ -10,7 +10,7 @@ const routes = [
     element: <Layout />,
     children: [
       { path: '404', element: <NotFoundView /> },
-      { path: '/', element: <MainView /> },
+      { path: '/', element: <Snippet /> },
       { path: '*', element: <Navigate to="/404" /> },
     ],
   },

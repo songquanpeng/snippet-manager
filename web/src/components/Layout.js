@@ -2,9 +2,10 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Toolbar from '@material-ui/core/Toolbar';
-import TagDrawer from './TagDrawer';
 import TopBar from './TopBar';
-import MainView from '../views/MainView';
+import TagList from './TagList';
+import SnippetList from './SnippetList';
+import Snippet from './Snippet';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -18,15 +19,15 @@ const useStyles = makeStyles((theme) => ({
 
 function Layout() {
   const classes = useStyles();
-
   return (
     <div className={classes.root}>
       <CssBaseline />
       <TopBar />
-      <TagDrawer />
+      <TagList />
+      <SnippetList />
       <main className={classes.content}>
         <Toolbar />
-        <MainView />
+        <Snippet />
       </main>
     </div>
   );

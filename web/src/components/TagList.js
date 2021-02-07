@@ -32,7 +32,7 @@ let tags = [
   { text: 'Go', link: 'Go' },
 ];
 
-export default function TagDrawer() {
+export default function TagList() {
   const classes = useStyles();
 
   return (
