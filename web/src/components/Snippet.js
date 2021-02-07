@@ -14,6 +14,12 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import SaveIcon from '@material-ui/icons/Save';
 import Slide from '@material-ui/core/Slide';
+import Typography from '@material-ui/core/Typography';
+
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { dark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+
+import marked from 'marked';
 
 let snackTimeout = undefined;
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -42,10 +48,14 @@ class Snippet extends React.Component {
       showSnackbar: false,
       showEditor: false,
       snackMessage: 'Hi',
+      renderedDescription: '',
     };
   }
 
   async componentDidMount() {
+    this.setState({
+      renderedDescription: marked(this.state.snippet.description),
+    });
     this.loadEditorConfig();
   }
 
@@ -223,9 +233,17 @@ ${snippet.description}`;
   };
 
   applyChange = async () => {
+    let snippet = this.draft2snippet(this.state.draft);
+    let needRenderMarkdown =
+      this.state.snippet.description !== snippet.description;
     this.setState({
-      snippet: this.draft2snippet(this.state.draft),
+      snippet,
     });
+    if (needRenderMarkdown) {
+      this.setState({
+        renderedDescription: marked(snippet.description),
+      });
+    }
     // TODO: send update request
     this.message('Snippet has been updated.');
   };
@@ -269,9 +287,22 @@ ${snippet.description}`;
     return (
       <>
         {this.renderTopPanel()}
-        <Paper>{this.state.snippet.title}</Paper>
-        <Paper>{this.state.snippet.code}</Paper>
-        <Paper>{this.state.snippet.description}</Paper>
+        <Paper style={{ padding: 16 }}>
+          <Typography variant="h4" gutterBottom>
+            {this.state.snippet.title}
+          </Typography>
+          <SyntaxHighlighter
+            language={this.state.snippet.language}
+            style={dark}
+          >
+            {this.state.snippet.code}
+          </SyntaxHighlighter>
+          <div
+            dangerouslySetInnerHTML={{
+              __html: this.state.renderedDescription,
+            }}
+          />
+        </Paper>
         {this.renderSnackbar()}
         {this.renderEditorDialog()}
       </>
