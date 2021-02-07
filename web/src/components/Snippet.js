@@ -3,35 +3,22 @@ import Button from '@material-ui/core/Button';
 import AceEditor from 'react-ace';
 import 'ace-builds/src-noconflict/mode-markdown';
 import 'ace-builds/src-noconflict/snippets/markdown';
-import 'ace-builds/src-noconflict/mode-java';
-import 'ace-builds/src-noconflict/snippets/java';
-import 'ace-builds/src-noconflict/mode-python';
-import 'ace-builds/src-noconflict/snippets/python';
-import 'ace-builds/src-noconflict/mode-c_cpp';
-import 'ace-builds/src-noconflict/snippets/c_cpp';
-import 'ace-builds/src-noconflict/mode-javascript';
-import 'ace-builds/src-noconflict/snippets/javascript';
-import 'ace-builds/src-noconflict/mode-html';
-import 'ace-builds/src-noconflict/snippets/html';
-import 'ace-builds/src-noconflict/mode-sh';
-import 'ace-builds/src-noconflict/snippets/sh';
-import 'ace-builds/src-noconflict/mode-typescript';
-import 'ace-builds/src-noconflict/snippets/typescript';
-import 'ace-builds/src-noconflict/mode-css';
-import 'ace-builds/src-noconflict/snippets/css';
-import 'ace-builds/src-noconflict/mode-sql';
-import 'ace-builds/src-noconflict/snippets/sql';
-import 'ace-builds/src-noconflict/mode-golang';
-import 'ace-builds/src-noconflict/snippets/golang';
-import 'ace-builds/src-noconflict/mode-csharp';
-import 'ace-builds/src-noconflict/snippets/csharp';
 import 'ace-builds/src-noconflict/theme-solarized_light';
 
 import Paper from '@material-ui/core/Paper';
 import Snackbar from '@material-ui/core/Snackbar';
-import { Input } from '@material-ui/core';
+import Dialog from '@material-ui/core/Dialog';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
+import SaveIcon from '@material-ui/icons/Save';
+import Slide from '@material-ui/core/Slide';
 
 let snackTimeout = undefined;
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 
 class Snippet extends React.Component {
   constructor(props) {
@@ -42,19 +29,19 @@ class Snippet extends React.Component {
       fontSize: 18,
       snippet: {
         language: 'javascript',
-        title: '',
-        code: '',
-        description: '',
+        title: '通过 API 来创建元素',
+        code:
+          "let hiddenTextArea = document.createElement('textarea');\n" +
+          'hiddenTextArea.setAttribute("id", "hiddenTextArea");\n' +
+          'hiddenTextArea.style.cssText = "display:hidden;";',
+        description:
+          '利用 API 来创建元素，除此之外还可以通过构建 HTML 文本来创建元素。',
+        tag: '浏览器脚本 HTML API',
       },
-      oldSnippet: {
-        language: '',
-        title: '',
-        code: '',
-        description: '',
-      },
+      draft: '',
       showSnackbar: false,
+      showEditor: false,
       snackMessage: 'Hi',
-      readOnly: true,
     };
   }
 
@@ -68,27 +55,6 @@ class Snippet extends React.Component {
     this.message('Snippet has been deleted.');
   };
 
-  reset = () => {
-    let snippet = this.state.oldSnippet;
-    this.setState({ snippet });
-    this.message('Snippet has been reset.');
-  };
-
-  switchEditState = () => {
-    let readOnly = !this.state.readOnly;
-    this.setState({ readOnly });
-    if (readOnly) {
-      this.message('Edit disabled.');
-    } else {
-      this.message('Edit enabled.');
-    }
-  };
-
-  submit = async () => {
-    // TODO: send update request
-    this.message('Snippet has been updated.');
-  };
-
   copy = async () => {
     try {
       await navigator.clipboard.writeText(this.state.snippet.code);
@@ -98,17 +64,10 @@ class Snippet extends React.Component {
     }
   };
 
-  onTitleChange = (e) => {
-    let snippet = { ...this.state.snippet };
-    snippet.title = e.target.value;
-    this.setState({ snippet });
-  };
-
-  onCodeChange = (newValue) => {
-    let snippet = { ...this.state.snippet };
-    snippet.code = newValue;
-    localStorage.setItem('editorContent', snippet.code);
-    this.setState({ snippet });
+  onChange = (newValue) => {
+    let draft = newValue;
+    localStorage.setItem('editorContent', draft);
+    this.setState({ draft });
   };
 
   loadEditorConfig() {
@@ -129,19 +88,16 @@ class Snippet extends React.Component {
 
   renderEditor() {
     return (
-      <>
-        <AceEditor
-          style={{ width: '100%' }}
-          mode={this.state.snippet.language}
-          theme={this.state.theme}
-          name={'editor'}
-          readOnly={this.state.readOnly}
-          onChange={this.onCodeChange}
-          value={this.state.snippet.code}
-          fontSize={this.state.fontSize}
-          setOptions={{ useWorker: false }}
-        />
-      </>
+      <AceEditor
+        style={{ width: '100%', height: '100%' }}
+        mode={'markdown'}
+        theme={this.state.theme}
+        name={'editor'}
+        onChange={this.onChange}
+        value={this.state.draft}
+        fontSize={this.state.fontSize}
+        setOptions={{ useWorker: false }}
+      />
     );
   }
 
@@ -186,24 +142,10 @@ class Snippet extends React.Component {
         </Button>
         <Button
           variant="contained"
-          onClick={this.reset}
           style={{ marginRight, marginBottom }}
+          onClick={this.showEditorDialog}
         >
-          Reset Change
-        </Button>
-        <Button
-          variant="contained"
-          style={{ marginRight, marginBottom }}
-          onClick={this.switchEditState}
-        >
-          {this.state.readOnly ? 'Enable Edit' : 'Disable Edit'}
-        </Button>
-        <Button
-          variant="contained"
-          style={{ marginRight, marginBottom }}
-          onClick={this.submit}
-        >
-          Submit Change
+          Edit Snippet
         </Button>
         <Button
           variant="contained"
@@ -217,22 +159,121 @@ class Snippet extends React.Component {
     );
   }
 
+  snippet2draft = (snippet) => {
+    return `# ${snippet.title}
+Tags: ${snippet.tag}
+
+## Code
+\`\`\` ${snippet.language}
+${snippet.code}
+\`\`\`
+
+## Description
+${snippet.description}`;
+  };
+
+  draft2snippet = (draft) => {
+    let lines = draft.split('\n');
+    let firstTripleBacktickPos = 0;
+    let secondTripleBacktickPos = 0;
+    for (let i = 2; i < lines.length; i++) {
+      if (lines[i].trim().startsWith('```')) {
+        if (firstTripleBacktickPos === 0) {
+          firstTripleBacktickPos = i;
+        } else {
+          secondTripleBacktickPos = i;
+          break;
+        }
+      }
+    }
+    let descriptionStartPos = 0;
+    for (let i = secondTripleBacktickPos + 1; i < lines.length; i++) {
+      if (lines[i].trim()) {
+        if (lines[i].trim().startsWith('#')) {
+          descriptionStartPos = i + 1;
+        } else {
+          descriptionStartPos = i;
+        }
+        break;
+      }
+    }
+
+    return {
+      language: lines[firstTripleBacktickPos].substr(3).trim(),
+      title: lines[0].substr(1).trim(),
+      code: lines
+        .slice(firstTripleBacktickPos + 1, secondTripleBacktickPos)
+        .join('\n'),
+      description: lines.slice(descriptionStartPos).join('\n'),
+      tag: lines[1].split(' ').slice(1).join(' '),
+    };
+  };
+
+  showEditorDialog = () => {
+    this.setState({
+      draft: this.snippet2draft(this.state.snippet),
+      showEditor: true,
+    });
+  };
+
+  closeEditorDialog = () => {
+    this.setState({
+      showEditor: false,
+    });
+  };
+
+  applyChange = async () => {
+    this.setState({
+      snippet: this.draft2snippet(this.state.draft),
+    });
+    // TODO: send update request
+    this.message('Snippet has been updated.');
+  };
+
+  renderEditorDialog() {
+    return (
+      <Dialog
+        fullScreen
+        open={this.state.showEditor}
+        onClose={this.closeEditorDialog}
+        TransitionComponent={Transition}
+      >
+        <AppBar
+          position={'relative'}
+          style={{ background: '#fbf1d3', boxShadow: 'none' }}
+        >
+          <Toolbar>
+            <IconButton
+              edge="start"
+              color="inherit"
+              onClick={this.closeEditorDialog}
+              aria-label="close"
+            >
+              <CloseIcon style={{ fill: '#000' }} />
+            </IconButton>
+            <IconButton
+              aria-label="save"
+              color="inherit"
+              onClick={this.applyChange}
+            >
+              <SaveIcon style={{ fill: '#000' }} />
+            </IconButton>
+          </Toolbar>
+        </AppBar>
+        {this.renderEditor()}
+      </Dialog>
+    );
+  }
+
   render() {
     return (
       <>
         {this.renderTopPanel()}
-        <Input
-          id="title"
-          placeholder="Input snippet title here."
-          style={{ marginBottom: 8 }}
-          fullWidth={true}
-          value={this.state.snippet.title}
-          onChange={this.onTitleChange}
-          readOnly={this.state.readOnly}
-        />
-        {this.renderEditor()}
+        <Paper>{this.state.snippet.title}</Paper>
+        <Paper>{this.state.snippet.code}</Paper>
         <Paper>{this.state.snippet.description}</Paper>
         {this.renderSnackbar()}
+        {this.renderEditorDialog()}
       </>
     );
   }

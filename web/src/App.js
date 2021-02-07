@@ -2,12 +2,12 @@ import React from 'react';
 import { useRoutes } from 'react-router-dom';
 
 import { ThemeProvider } from '@material-ui/core';
-import theme from './theme';
+import { mainTheme } from './theme';
 import routes from './routes';
 
 const App = () => {
   const routing = useRoutes(routes);
-  return <ThemeProvider theme={theme}>{routing}</ThemeProvider>;
+  return <ThemeProvider theme={mainTheme}>{routing}</ThemeProvider>;
 };
 
 export default App;
