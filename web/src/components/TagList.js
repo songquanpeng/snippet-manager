@@ -8,8 +8,9 @@ import CodeIcon from '@material-ui/icons/Code';
 import Drawer from '@material-ui/core/Drawer';
 import Toolbar from '@material-ui/core/Toolbar';
 import { Link } from 'react-router-dom';
+import constant from '../utils/constant';
 
-const drawerWidth = 240;
+const drawerWidth = constant.tagListWidth;
 
 const useStyles = makeStyles((theme) => ({
   drawer: {

@@ -6,14 +6,17 @@ import TopBar from './TopBar';
 import TagList from './TagList';
 import SnippetList from './SnippetList';
 import Snippet from './Snippet';
+import constant from '../utils/constant';
 
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
   },
   content: {
-    flexGrow: 1,
     padding: theme.spacing(3),
+    marginLeft: constant.snippetListWidth,
+    width: '100%',
+    height: '100%',
   },
 }));
 

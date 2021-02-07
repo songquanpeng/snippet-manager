@@ -5,15 +5,16 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import { Link } from 'react-router-dom';
 import { Paper } from '@material-ui/core';
+import constant from '../utils/constant';
 
 const useStyles = makeStyles((theme) => ({
   root: {
     height: '100%',
-    width: 240,
-    marginTop: 64,
+    width: constant.snippetListWidth,
+    marginTop: constant.topBarHeight,
     position: 'fixed',
     top: 0,
-    left: 240,
+    left: constant.tagListWidth,
   },
 }));
 
