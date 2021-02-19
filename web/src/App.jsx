@@ -13,7 +13,7 @@ const App = () => {
       e.classList.add('available');
       setTimeout(() => {
         e.outerHTML = '';
-      }, 2000);
+      }, 20);
     }
   }, []);
 
