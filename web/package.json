@@ -28,12 +28,9 @@
   "devDependencies": {
     "@vitejs/plugin-react-refresh": "^1.1.0",
     "vite": "^2.0.0",
-    "prettier": "^2.1.1",
-    "source-map-explorer": "^2.5.0"
+    "prettier": "^2.1.1"
   },
   "prettier": {
     "singleQuote": true
-  },
-  "proxy": "http://localhost:3000",
-  "homepage": "/"
+  }
 }
