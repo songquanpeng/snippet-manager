@@ -1,0 +1,1 @@
+{"version":3,"sources":["webpack://src/index.css"],"names":[],"mappings":"AAAA,UACI,QACJ,CAEA,KACI,8FACJ","file":"main.7242b9f1.chunk.css","sourcesContent":["html, body {\n    margin: 0;\n}\n\ncode {\n    font-family: 'Cascadia Code', source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace, 微软雅黑;\n}\n"]}
