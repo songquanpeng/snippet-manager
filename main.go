@@ -9,18 +9,22 @@ import (
 	"snippet-manager/model"
 )
 
-func main() {
+func setupServer() *gin.Engine {
 	if os.Getenv("MODE") != "debug" {
 		gin.SetMode(gin.ReleaseMode)
 	}
-
-	db, _ := model.DB.DB()
-	defer db.Close()
-
 	server := gin.Default()
 	server.Use(cors.Default())
 	SetApiRouter(server)
 	SetIndexRouter(server)
+	return server
+}
+
+func main() {
+	db, _ := model.DB.DB()
+	defer db.Close()
+
+	server := setupServer()
 	var port = "3000"
 	if len(os.Args) > 1 {
 		port = os.Args[1]

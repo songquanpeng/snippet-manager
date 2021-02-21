@@ -3,6 +3,7 @@ package middleware
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"snippet-manager/common"
 )
 
 func AdminAuthMiddleware() func(c *gin.Context) {
@@ -14,7 +15,7 @@ func AdminAuthMiddleware() func(c *gin.Context) {
 		}
 		if !isAdmin {
 			c.JSON(http.StatusOK, gin.H{
-				"code":    false,
+				"code":    common.StatusPermissionDenied,
 				"message": "admin required",
 			})
 			c.Abort()

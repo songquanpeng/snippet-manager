@@ -7,10 +7,15 @@ import (
 
 type Snippet struct {
 	gorm.Model
-	Id          uuid.UUID
+	ID          uuid.UUID
 	UserId      uuid.UUID
 	Language    string
 	Code        string
 	Title       string
 	Description string
+}
+
+func (s *Snippet) BeforeCreate(*gorm.DB) (err error) {
+	s.ID = uuid.New()
+	return
 }

@@ -5,4 +5,6 @@ const (
 	StatusError
 	StatusPermissionDenied
 	StatusInvalidParameter
+	StatusUnexpectedError
+	StatusRecordNotFound
 )

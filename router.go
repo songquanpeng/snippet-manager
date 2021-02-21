@@ -19,8 +19,7 @@ func SetApiRouter(router *gin.Engine) {
 		basicAuth := apiGroup.Group("/")
 		basicAuth.Use(middleware.JWTAuthMiddleware())
 		{
-			basicAuth.GET("/user", controller.CreateUser)
-			basicAuth.POST("/user", controller.CreateUser)
+			basicAuth.GET("/user", controller.GetUser)
 			basicAuth.PUT("/user", controller.UpdateUser)
 
 			basicAuth.POST("/snippet", controller.CreateSnippet)
@@ -30,11 +29,12 @@ func SetApiRouter(router *gin.Engine) {
 			adminAuth := basicAuth.Group("/")
 			adminAuth.Use(middleware.AdminAuthMiddleware())
 			{
-				adminAuth.GET("/user/:id", controller.GetUser)
-				adminAuth.PUT("/user/:id", controller.UpdateUser)
-				adminAuth.DELETE("/user/:id", controller.DeleteUser)
+				adminAuth.GET("/user/:username", controller.GetUser)
+				adminAuth.PUT("/user/:username", controller.UpdateUser)
+				adminAuth.DELETE("/user/:username", controller.DeleteUser)
 			}
 		}
 		apiGroup.GET("/snippet/:id", controller.GetSnippet)
+		apiGroup.POST("/user", controller.CreateUser)
 	}
 }

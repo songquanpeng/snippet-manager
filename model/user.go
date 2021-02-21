@@ -7,9 +7,14 @@ import (
 
 type User struct {
 	gorm.Model
-	Id       uuid.UUID
-	Username string
+	ID       uuid.UUID
+	Username string `gorm:"unique"`
 	Password string
 	IsAdmin  bool
 	IsBanned bool
+}
+
+func (u *User) BeforeCreate(*gorm.DB) (err error) {
+	u.ID = uuid.New()
+	return
 }

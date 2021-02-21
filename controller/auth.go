@@ -18,23 +18,20 @@ func Auth(c *gin.Context) {
 		return
 	}
 
-	// TODO: fetch user from database, do not use this one
-	user.IsAdmin = false
-	user.IsBanned = true
-
-	// TODO: verify the username & password
-	if user.Username == "admin" && user.Password == "123456" {
-		tokenString, _ := common.GenerateToken(user)
-		c.JSON(http.StatusOK, gin.H{
-			"code":    common.StatusOk,
-			"message": "ok",
-			"data":    gin.H{"token": tokenString},
-		})
-		return
+	realUser := &model.User{}
+	if err := model.DB.Where("username = ?", user.Username).First(realUser).Error; err == nil {
+		if realUser.Password == user.Password {
+			tokenString, _ := common.GenerateToken(*realUser)
+			c.JSON(http.StatusOK, gin.H{
+				"code":    common.StatusOk,
+				"message": "ok",
+				"data":    gin.H{"token": tokenString},
+			})
+			return
+		}
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"code":    common.StatusInvalidParameter,
 		"message": "invalid pair of username and password",
 	})
-	return
 }

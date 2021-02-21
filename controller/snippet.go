@@ -7,28 +7,28 @@ import (
 )
 
 func GetSnippet(c *gin.Context) {
-	c.JSON(http.StatusBadRequest, gin.H{
+	c.JSON(http.StatusOK, gin.H{
 		"code":    common.StatusOk,
 		"message": "GetSnippet",
 	})
 }
 
 func CreateSnippet(c *gin.Context) {
-	c.JSON(http.StatusBadRequest, gin.H{
+	c.JSON(http.StatusOK, gin.H{
 		"code":    common.StatusOk,
 		"message": "CreateSnippet",
 	})
 }
 
 func UpdateSnippet(c *gin.Context) {
-	c.JSON(http.StatusBadRequest, gin.H{
+	c.JSON(http.StatusOK, gin.H{
 		"code":    common.StatusOk,
 		"message": "UpdateSnippet",
 	})
 }
 
 func DeleteSnippet(c *gin.Context) {
-	c.JSON(http.StatusBadRequest, gin.H{
+	c.JSON(http.StatusOK, gin.H{
 		"code":    common.StatusOk,
 		"message": "DeleteSnippet",
 	})
