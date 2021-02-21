@@ -2,11 +2,6 @@
   "name": "snippet-manager",
   "version": "0.1.0",
   "private": true,
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "serve": "vite preview"
-  },
   "dependencies": {
     "@material-ui/core": "^4.11.3",
     "@material-ui/icons": "^4.11.2",
@@ -15,7 +10,7 @@
     "axios": "^0.21.1",
     "clsx": "^1.1.1",
     "history": "^5.0.0",
-    "marked": ">=2.0.0",
+    "marked": "^1.2.9",
     "react": "^16.13.1",
     "react-ace": "^9.3.0",
     "react-dom": "^16.13.1",
@@ -26,11 +21,36 @@
     "react-window": "^1.8.6"
   },
   "devDependencies": {
-    "@vitejs/plugin-react-refresh": "^1.1.0",
     "prettier": "^2.1.1",
-    "vite": "^2.0.1"
+    "source-map-explorer": "^2.5.0"
+  },
+  "scripts": {
+    "dev": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   },
   "prettier": {
     "singleQuote": true
-  }
+  },
+  "proxy": "http://localhost:3000",
+  "homepage": "/"
 }

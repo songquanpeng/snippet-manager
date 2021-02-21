@@ -36,24 +36,24 @@ class Snippet extends React.Component {
         language: 'javascript',
         title: '通过 API 来创建元素',
         code:
-          'let hiddenTextArea = document.createElement(\'textarea\');\n' +
+          "let hiddenTextArea = document.createElement('textarea');\n" +
           'hiddenTextArea.setAttribute("id", "hiddenTextArea");\n' +
           'hiddenTextArea.style.cssText = "display:hidden;";',
         description:
           '利用 API 来创建元素，除此之外还可以通过构建 HTML 文本来创建元素。',
-        tag: '浏览器脚本 HTML API'
+        tag: '浏览器脚本 HTML API',
       },
       draft: '',
       showSnackbar: false,
       showEditor: false,
       snackMessage: 'Hi',
-      renderedDescription: ''
+      renderedDescription: '',
     };
   }
 
   async componentDidMount() {
     this.setState({
-      renderedDescription: marked(this.state.snippet.description)
+      renderedDescription: marked(this.state.snippet.description),
     });
     this.loadEditorConfig();
   }
@@ -91,7 +91,7 @@ class Snippet extends React.Component {
     }
     this.setState({
       theme,
-      fontSize
+      fontSize,
     });
   }
 
@@ -113,12 +113,12 @@ class Snippet extends React.Component {
   message(message) {
     this.setState({
       showSnackbar: true,
-      snackMessage: message
+      snackMessage: message,
     });
     clearTimeout(snackTimeout);
     snackTimeout = setTimeout(() => {
       this.setState({
-        showSnackbar: false
+        showSnackbar: false,
       });
     }, 3000);
   }
@@ -128,7 +128,7 @@ class Snippet extends React.Component {
       <Snackbar
         anchorOrigin={{
           vertical: 'top',
-          horizontal: 'right'
+          horizontal: 'right',
         }}
         open={this.state.showSnackbar}
         message={this.state.snackMessage}
@@ -214,20 +214,20 @@ ${snippet.description}`;
         .slice(firstTripleBacktickPos + 1, secondTripleBacktickPos)
         .join('\n'),
       description: lines.slice(descriptionStartPos).join('\n'),
-      tag: lines[1].split(' ').slice(1).join(' ')
+      tag: lines[1].split(' ').slice(1).join(' '),
     };
   };
 
   showEditorDialog = () => {
     this.setState({
       draft: this.snippet2draft(this.state.snippet),
-      showEditor: true
+      showEditor: true,
     });
   };
 
   closeEditorDialog = () => {
     this.setState({
-      showEditor: false
+      showEditor: false,
     });
   };
 
@@ -236,11 +236,11 @@ ${snippet.description}`;
     let needRenderMarkdown =
       this.state.snippet.description !== snippet.description;
     this.setState({
-      snippet
+      snippet,
     });
     if (needRenderMarkdown) {
       this.setState({
-        renderedDescription: marked(snippet.description)
+        renderedDescription: marked(snippet.description),
       });
     }
     // TODO: send update request
@@ -295,7 +295,7 @@ ${snippet.description}`;
           </Highlight>
           <div
             dangerouslySetInnerHTML={{
-              __html: this.state.renderedDescription
+              __html: this.state.renderedDescription,
             }}
           />
         </Paper>
