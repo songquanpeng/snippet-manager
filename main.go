@@ -2,16 +2,23 @@ package main
 
 import (
 	"fmt"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"log"
 	"os"
+	"snippet-manager/model"
 )
 
 func main() {
 	if os.Getenv("MODE") != "debug" {
 		gin.SetMode(gin.ReleaseMode)
 	}
+
+	db, _ := model.DB.DB()
+	defer db.Close()
+
 	server := gin.Default()
+	server.Use(cors.Default())
 	SetApiRouter(server)
 	SetIndexRouter(server)
 	var port = "3000"
