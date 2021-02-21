@@ -35,7 +35,7 @@ export default function SnippetList() {
         {snippets.map((snippet, index) => (
           <ListItem
             button
-            key={snippet}
+            key={snippet.link}
             component={Link}
             to={`/snippet/${snippet.link}`}
           >

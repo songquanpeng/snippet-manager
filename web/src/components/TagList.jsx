@@ -48,7 +48,7 @@ export default function TagList() {
       <div className={classes.drawerContainer}>
         <List>
           {tags.map((tag, index) => (
-            <ListItem button key={tag} component={Link} to={`/tag/${tag.link}`}>
+            <ListItem button key={tag.link} component={Link} to={`/tag/${tag.link}`}>
               <ListItemIcon>
                 <CodeIcon />
               </ListItemIcon>
