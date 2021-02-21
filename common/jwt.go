@@ -15,8 +15,7 @@ type MyClaims struct {
 	jwt.StandardClaims
 }
 
-// TODO
-const TokenExpireDuration = time.Hour * 2
+const TokenExpireDuration = time.Hour * TokenExpireHour
 
 var Secret = []byte("default secret")
 
@@ -33,7 +32,7 @@ func GenerateToken(user model.User) (string, error) {
 		user.IsBanned,
 		jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(TokenExpireDuration).Unix(),
-			Issuer:    "my-project",
+			Issuer:    AppName,
 		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, c)

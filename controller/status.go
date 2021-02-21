@@ -11,8 +11,9 @@ func GetStatus(c *gin.Context) {
 		"code":    common.StatusOk,
 		"message": "server is online",
 		"data": gin.H{
-			"version": "0.1.0",
-			"name":    "snippet-manager",
+			"version":         common.Version,
+			"name":            common.AppName,
+			"tokenExpireHour": common.TokenExpireHour,
 		},
 	})
 }
