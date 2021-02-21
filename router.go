@@ -35,7 +35,7 @@ func SetApiRouter(router *gin.Engine) {
 			basicAuth.PUT("/user", controller.UpdateUser)
 
 			basicAuth.POST("/snippet", controller.CreateSnippet)
-			basicAuth.PUT("/snippet/:id", controller.UpdateSnippet)
+			basicAuth.PUT("/snippet", controller.UpdateSnippet)
 			basicAuth.DELETE("/snippet/:id", controller.DeleteSnippet)
 
 			adminAuth := basicAuth.Group("/")
@@ -47,6 +47,8 @@ func SetApiRouter(router *gin.Engine) {
 			}
 		}
 		apiGroup.GET("/snippet/:id", controller.GetSnippet)
+		apiGroup.GET("/search/snippet", controller.SearchSnippet)
+		apiGroup.GET("/search/snippet/:query", controller.SearchSnippet)
 		apiGroup.POST("/user", controller.CreateUser)
 	}
 }
