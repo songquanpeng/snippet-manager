@@ -12,6 +12,8 @@ func main() {
 		gin.SetMode(gin.ReleaseMode)
 	}
 	server := gin.Default()
+	SetApiRouter(server)
+	SetIndexRouter(server)
 	var port = "3000"
 	if len(os.Args) > 1 {
 		port = os.Args[1]
