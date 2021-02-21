@@ -3,6 +3,7 @@ html, body {
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-  monospace;
+  font-family: 'Cascadia Code', source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  monospace, 微软雅黑;
+  font-size: larger;
 }

@@ -16,8 +16,7 @@ import SaveIcon from '@material-ui/icons/Save';
 import Slide from '@material-ui/core/Slide';
 import Typography from '@material-ui/core/Typography';
 
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { dark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import Highlight from 'react-highlight'
 
 import marked from 'marked';
 
@@ -291,16 +290,9 @@ ${snippet.description}`;
           <Typography variant="h4" gutterBottom>
             {this.state.snippet.title}
           </Typography>
-          {/*<SyntaxHighlighter*/}
-          {/*  language={this.state.snippet.language}*/}
-          {/*  style={dark}*/}
-          {/*>*/}
-          {/*  {this.state.snippet.code}*/}
-          {/*</SyntaxHighlighter>*/}
-          <pre>
-            <code>{this.state.snippet.code}
-            </code>
-          </pre>
+          <Highlight className={this.state.snippet.language}>
+            {this.state.snippet.code}
+          </Highlight>
           <div
             dangerouslySetInnerHTML={{
               __html: this.state.renderedDescription
