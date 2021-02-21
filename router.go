@@ -3,6 +3,8 @@ package main
 import (
 	"github.com/gin-gonic/contrib/static"
 	"github.com/gin-gonic/gin"
+	"net/http"
+	"snippet-manager/common"
 	"snippet-manager/controller"
 	"snippet-manager/middleware"
 )
@@ -11,6 +13,16 @@ func SetIndexRouter(router *gin.Engine) {
 	router.GET("/status", controller.GetStatus)
 	router.POST("/auth", controller.Auth)
 	router.Use(static.Serve("/", static.LocalFile("./web/build", true)))
+	router.NoRoute(func(c *gin.Context) {
+		if c.Request.URL.Path == "/" {
+			c.Redirect(http.StatusSeeOther, common.FallbackFrontendAddress)
+		} else {
+			c.JSON(http.StatusNotFound, gin.H{
+				"code":    common.StatusError,
+				"message": "the requested url does not exist",
+			})
+		}
+	})
 }
 
 func SetApiRouter(router *gin.Engine) {
