@@ -7,7 +7,7 @@ import (
 
 type Snippet struct {
 	gorm.Model
-	Id          uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4()"`
+	Id          uuid.UUID
 	UserId      uuid.UUID
 	Language    string
 	Code        string

@@ -12,7 +12,7 @@ func Auth(c *gin.Context) {
 	err := c.ShouldBind(&user)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
-			"success": false,
+			"code":    common.StatusInvalidParameter,
 			"message": "invalid parameters",
 		})
 		return
@@ -26,14 +26,14 @@ func Auth(c *gin.Context) {
 	if user.Username == "admin" && user.Password == "123456" {
 		tokenString, _ := common.GenerateToken(user)
 		c.JSON(http.StatusOK, gin.H{
-			"success": true,
+			"code":    common.StatusOk,
 			"message": "ok",
 			"data":    gin.H{"token": tokenString},
 		})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{
-		"success": false,
+		"code":    common.StatusInvalidParameter,
 		"message": "invalid pair of username and password",
 	})
 	return

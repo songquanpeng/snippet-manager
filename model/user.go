@@ -7,7 +7,7 @@ import (
 
 type User struct {
 	gorm.Model
-	Id       uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4()"`
+	Id       uuid.UUID
 	Username string
 	Password string
 	IsAdmin  bool

@@ -8,6 +8,7 @@ import (
 )
 
 func SetIndexRouter(router *gin.Engine) {
+	router.GET("/status", controller.GetStatus)
 	router.POST("/auth", controller.Auth)
 	router.Use(static.Serve("/", static.LocalFile("./web/build", true)))
 }

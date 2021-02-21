@@ -14,7 +14,7 @@ func AdminAuthMiddleware() func(c *gin.Context) {
 		}
 		if !isAdmin {
 			c.JSON(http.StatusOK, gin.H{
-				"success": false,
+				"code":    false,
 				"message": "admin required",
 			})
 			c.Abort()

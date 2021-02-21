@@ -12,7 +12,7 @@ func JWTAuthMiddleware() func(c *gin.Context) {
 		authHeader := c.Request.Header.Get("Authorization")
 		if authHeader == "" {
 			c.JSON(http.StatusOK, gin.H{
-				"success": false,
+				"code":    false,
 				"message": "auth is blank",
 			})
 			c.Abort()
@@ -21,7 +21,7 @@ func JWTAuthMiddleware() func(c *gin.Context) {
 		parts := strings.SplitN(authHeader, " ", 2)
 		if !(len(parts) == 2 && parts[0] == "Bearer") {
 			c.JSON(http.StatusOK, gin.H{
-				"success": false,
+				"code":    false,
 				"message": "the format of auth is incorrect",
 			})
 			c.Abort()
@@ -30,7 +30,7 @@ func JWTAuthMiddleware() func(c *gin.Context) {
 		claims, err := common.ParseToken(parts[1])
 		if err != nil {
 			c.JSON(http.StatusOK, gin.H{
-				"success": false,
+				"code":    false,
 				"message": "invalid token",
 			})
 			c.Abort()
@@ -38,7 +38,7 @@ func JWTAuthMiddleware() func(c *gin.Context) {
 		}
 		if claims.IsBanned {
 			c.JSON(http.StatusOK, gin.H{
-				"success": false,
+				"code":    false,
 				"message": "you has been banned",
 			})
 			c.Abort()
