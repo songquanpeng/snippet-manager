@@ -1,0 +1,22 @@
+{
+  "name": "Snippet Manager",
+  "description": "Your self-deployed online code snippet manager.",
+  "keywords": [
+    "snippet manager",
+    "Go",
+    "react"
+  ],
+  "website": "https://snippet.justsong.cn/",
+  "repository": "https://github.com/songquanpeng/snippet-manager",
+  "scripts": {
+    "postdeploy": "cd web && yarn && yarn build && cd .."
+  },
+  "buildpacks": [
+    {
+      "url": "heroku/go"
+    },
+    {
+      "url": "heroku/nodejs"
+    }
+  ]
+}
