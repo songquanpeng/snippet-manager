@@ -12,6 +12,7 @@ type User struct {
 	Password string
 	IsAdmin  bool
 	IsBanned bool
+	Tags     string // Spilt by "," without space.
 }
 
 func (u *User) BeforeCreate(*gorm.DB) (err error) {

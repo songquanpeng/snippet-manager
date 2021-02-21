@@ -12,6 +12,7 @@ type Snippet struct {
 	Language    string
 	Code        string
 	Title       string
+	Tags        string // Spilt by "," without space.
 	Description string
 }
 

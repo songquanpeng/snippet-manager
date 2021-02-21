@@ -34,6 +34,9 @@ func SetApiRouter(router *gin.Engine) {
 			basicAuth.GET("/user", controller.GetUser)
 			basicAuth.PUT("/user", controller.UpdateUser)
 
+			basicAuth.GET("/tag/:tag", controller.GetSnippetsByTag)
+
+			basicAuth.GET("/snippet", controller.GetSnippetsByUser)
 			basicAuth.POST("/snippet", controller.CreateSnippet)
 			basicAuth.PUT("/snippet", controller.UpdateSnippet)
 			basicAuth.DELETE("/snippet/:id", controller.DeleteSnippet)
