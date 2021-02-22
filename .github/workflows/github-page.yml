@@ -10,6 +10,8 @@ jobs:
           persist-credentials: false
       - name: Install and Build 🔧
         run: |
+          git config user.name "Github Action"
+          git config user.email "action@github.com"
           cd web
           npm install
           npm run build
