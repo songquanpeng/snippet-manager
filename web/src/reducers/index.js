@@ -1,6 +1,7 @@
 import SettingDialog from './SettingDialog';
 import Token from './Token';
 import Setting from './Setting';
+import Toast from './Toast';
 
 // https://stackoverflow.com/questions/59200785/react-usereducer-how-to-combine-multiple-reducers
 const combineReducers = (reducers) => {
@@ -13,4 +14,4 @@ const combineReducers = (reducers) => {
   };
 };
 
-export default combineReducers({ SettingDialog, Token, Setting });
+export default combineReducers({ SettingDialog, Token, Setting, Toast });

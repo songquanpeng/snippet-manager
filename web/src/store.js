@@ -1,13 +1,22 @@
 import React, { createContext, useReducer } from 'react';
 import Reducer from './reducers';
+import { toastType } from './utils/constant';
 
 const initialState = {
-  SettingDialog: false,
+  SettingDialog: {
+    open: false,
+  },
   Token: '',
   Setting: {
     username: '',
     password: '',
-    server: '',
+    server: 'https://code-snippet-manager.herokuapp.com',
+  },
+  Toast: {
+    open: false,
+    message: '',
+    duration: 5000,
+    type: toastType.info,
   },
 };
 

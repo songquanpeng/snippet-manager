@@ -12,3 +12,10 @@ export const statusCode = {
   statusUnexpectedError: 1004,
   statusRecordNotFound: 1005,
 };
+
+export const toastType = {
+  error: 'error',
+  warning: 'warning',
+  info: 'info',
+  success: 'success',
+};

@@ -19,6 +19,8 @@ import { Context } from '../store';
 
 import { loadSetting, saveSetting } from '../utils/setting';
 import { refreshToken } from '../utils/token';
+import Toast from './Toast';
+import { toastType } from '../utils/constant';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -101,7 +103,20 @@ function Layout() {
         <DialogActions>
           <Button
             onClick={async () => {
-              await refreshToken(setting, dispatch);
+              let [success, message] = await refreshToken(setting, dispatch);
+              let type = toastType.error;
+              if (success) {
+                message = 'Your setting is okay.';
+                type = toastType.success;
+              }
+              dispatch({
+                type: 'SHOW_TOAST',
+                payload: {
+                  message,
+                  type,
+                  duration: success ? 3000 : 6000,
+                },
+              });
             }}
             color="primary"
           >
@@ -110,6 +125,14 @@ function Layout() {
           <Button
             onClick={() => {
               saveSetting(setting, dispatch);
+              dispatch({
+                type: 'SHOW_TOAST',
+                payload: {
+                  message: 'Your settings have been saved in local storage.',
+                  type: toastType.success,
+                  duration: 3000,
+                },
+              });
             }}
             color="primary"
           >
@@ -117,6 +140,7 @@ function Layout() {
           </Button>
         </DialogActions>
       </Dialog>
+      <Toast />
     </div>
   );
 }
