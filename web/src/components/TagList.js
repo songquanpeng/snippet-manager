@@ -8,9 +8,9 @@ import CodeIcon from '@material-ui/icons/Code';
 import Drawer from '@material-ui/core/Drawer';
 import Toolbar from '@material-ui/core/Toolbar';
 import { Link } from 'react-router-dom';
-import constant from '../utils/constant';
+import { style } from '../utils/constant';
 
-const drawerWidth = constant.tagListWidth;
+const drawerWidth = style.tagListWidth;
 
 const useStyles = makeStyles((theme) => ({
   drawer: {
@@ -48,7 +48,12 @@ export default function TagList() {
       <div className={classes.drawerContainer}>
         <List>
           {tags.map((tag, index) => (
-            <ListItem button key={tag.link} component={Link} to={`/tag/${tag.link}`}>
+            <ListItem
+              button
+              key={tag.link}
+              component={Link}
+              to={`/tag/${tag.link}`}
+            >
               <ListItemIcon>
                 <CodeIcon />
               </ListItemIcon>

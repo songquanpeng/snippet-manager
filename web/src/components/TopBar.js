@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import IconButton from '@material-ui/core/IconButton';
@@ -14,6 +14,8 @@ import SearchIcon from '@material-ui/icons/Search';
 import InputBase from '@material-ui/core/InputBase';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import { fade, makeStyles } from '@material-ui/core/styles';
+import { Context } from '../store';
+import { loadSetting } from '../utils/setting';
 
 const useStyles = makeStyles((theme) => ({
   grow: {
@@ -93,6 +95,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function TopBar() {
+  const [_, dispatch] = useContext(Context);
+
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
@@ -128,7 +132,14 @@ export default function TopBar() {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>Setting</MenuItem>
+      <MenuItem
+        onClick={() => {
+          handleMenuClose();
+          dispatch({ type: 'SET_SETTING_DIALOG', payload: true });
+        }}
+      >
+        Setting
+      </MenuItem>
       <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
     </Menu>
   );
