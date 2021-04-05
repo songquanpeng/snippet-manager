@@ -16,7 +16,7 @@ func GetTags(c *gin.Context) {
 		})
 	}
 	var tags []*model.Tag
-	if err := model.DB.Where("user_id", userID).Order("text desc").Find(&tags).Error; err != nil {
+	if err := model.DB.Where("user_id", userID).Order("text asc").Find(&tags).Error; err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"code":    common.StatusError,
 			"message": err.Error(),

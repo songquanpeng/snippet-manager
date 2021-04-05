@@ -18,6 +18,8 @@ const initialState = {
   },
   TagList: [],
   SnippetList: [],
+  CurrentTag: '',
+  CurrentSnippet: '',
 };
 
 const Store = ({ children }) => {

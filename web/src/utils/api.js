@@ -61,7 +61,6 @@ export const refreshTagList = async (state, dispatch) => {
     let data = res.data;
     if (data.code === statusCode.statusOk) {
       let tags = data.data;
-      console.log('Change SET_TAG_LIST');
       dispatch({ type: 'SET_TAG_LIST', payload: tags });
       return [true, ''];
     } else {
@@ -70,5 +69,29 @@ export const refreshTagList = async (state, dispatch) => {
   } catch (e) {
     console.error(e);
     return [false, `Failed to refresh tag list: ${e.message}.`];
+  }
+};
+
+export const refreshSnippetList = async (state, dispatch) => {
+  let id = state.CurrentTag;
+  if (id === '') {
+    id = state.TagList[0].ID;
+  }
+  try {
+    let res = await api.get(`/tag/${id}`);
+    let data = res.data;
+    if (data.code === statusCode.statusOk) {
+      let snippets = data.data;
+      if (snippets === null) {
+        snippets = [];
+      }
+      dispatch({ type: 'SET_SNIPPET_LIST', payload: snippets });
+      return [true, ''];
+    } else {
+      return [false, `Failed to refresh snippet list: ${data.message}.`];
+    }
+  } catch (e) {
+    console.error(e);
+    return [false, `Failed to refresh snippet list: ${e.message}.`];
   }
 };

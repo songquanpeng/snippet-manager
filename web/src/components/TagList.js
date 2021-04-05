@@ -64,9 +64,12 @@ export default function TagList() {
           {state.TagList.map((tag, index) => (
             <ListItem
               button
-              key={tag.Text}
+              key={tag.ID}
               component={Link}
               to={`/tag/${tag.Text}`}
+              onClick={() => {
+                dispatch({ type: 'SET_CURRENT_TAG', payload: tag.ID });
+              }}
             >
               <ListItemIcon>
                 <CodeIcon />

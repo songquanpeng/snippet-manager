@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import { Link } from 'react-router-dom';
 import { Paper } from '@material-ui/core';
-import { style } from '../utils/constant';
+import { style, toastType } from '../utils/constant';
+import { Context } from '../store';
+import { refreshSnippetList, refreshTagList } from '../utils/api';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -18,28 +20,43 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-let snippets = [
-  { text: '通过 window 对象使函数在页面可用', link: 'temp-link-1' },
-  { text: '通过构建 HTML 文本来创建并插入元素', link: 'temp-link-2' },
-  { text: '通过 API 来创建元素', link: 'temp-link-3' },
-  { text: '复制文字到剪切板', link: 'temp-link-4' },
-  { text: '打开新的页面', link: 'temp-link-5' },
-];
-
 export default function SnippetList() {
+  const [state, dispatch] = useContext(Context);
+
+  useEffect(() => {
+    if (state.TagList.length !== 0) {
+      console.log('called yes', state);
+      (async () => {
+        let [ok, message] = await refreshSnippetList(state, dispatch);
+        if (!ok) {
+          dispatch({
+            type: 'SHOW_TOAST',
+            payload: {
+              message,
+              type: toastType.error,
+            },
+          });
+        }
+      })();
+    }
+  }, [state.TagList, state.CurrentTag]);
+
   const classes = useStyles();
 
   return (
     <Paper className={classes.root}>
       <List>
-        {snippets.map((snippet, index) => (
+        {state.SnippetList.map((snippet, index) => (
           <ListItem
             button
-            key={snippet.link}
+            key={snippet.ID}
             component={Link}
-            to={`/snippet/${snippet.link}`}
+            to={`/snippet/${snippet.ID}`}
+            onClick={() => {
+              dispatch({ type: 'SET_CURRENT_SNIPPET', payload: snippet.ID });
+            }}
           >
-            <ListItemText primary={snippet.text} />
+            <ListItemText primary={snippet.Title} />
           </ListItem>
         ))}
       </List>

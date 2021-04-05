@@ -45,6 +45,16 @@ const Reducer = (state, action) => {
         ...state,
         Token: action.payload,
       };
+    case 'SET_CURRENT_TAG':
+      return {
+        ...state,
+        CurrentTag: action.payload,
+      };
+    case 'SET_CURRENT_SNIPPET':
+      return {
+        ...state,
+        CurrentSnippet: action.payload,
+      };
     default:
       return state;
   }
