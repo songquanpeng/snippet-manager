@@ -117,11 +117,33 @@ export const getSnippet = async (state) => {
   return [false, undefined];
 };
 
-export const updateSnippet = async (snippet) => {
+export const updateSnippet = async (snippet, isNewSnippet) => {
+  if (isNewSnippet === undefined) {
+    isNewSnippet = false;
+  }
   let ok = false;
   let message = '';
   try {
-    let res = await api.put(`/snippet`, snippet);
+    let res = isNewSnippet
+      ? await api.post(`/snippet`, snippet)
+      : await api.put(`/snippet`, snippet);
+    let data = res.data;
+    if (data.code === statusCode.statusOk) {
+      ok = true;
+    }
+    message = data.message;
+  } catch (e) {
+    console.error(e);
+    message = e;
+  }
+  return [ok, message];
+};
+
+export const deleteSnippet = async (id) => {
+  let ok = false;
+  let message = '';
+  try {
+    let res = await api.delete(`/snippet/${id}`);
     let data = res.data;
     if (data.code === statusCode.statusOk) {
       ok = true;

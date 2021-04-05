@@ -21,19 +21,19 @@ import { Context } from '../store';
 
 import { snippet2draft, draft2snippet } from '../utils/editor';
 import { toastType } from '../utils/constant';
-import { getSnippet, updateSnippet } from '../utils/api';
+import { deleteSnippet, getSnippet, updateSnippet } from '../utils/api';
+import { Link } from 'react-router-dom';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
+const marginRight = 8;
+const marginBottom = 16;
+
 function Snippet() {
   const [state, dispatch] = useContext(Context);
-  const [editor, setEditor] = useState({
-    theme: 'solarized_light',
-    fontSize: 18,
-    show: false,
-  });
+
   const [snippet, setSnippet] = useState({
     Language: '',
     Code: '',
@@ -43,6 +43,11 @@ function Snippet() {
     ID: '',
   });
   const [renderedDescription, setRenderedDescription] = useState('');
+  const [editor, setEditor] = useState({
+    theme: 'solarized_light',
+    fontSize: 18,
+    show: false,
+  });
   const [draft, setDraft] = useState();
 
   useEffect(() => {
@@ -62,9 +67,6 @@ function Snippet() {
     })();
   }, [state.CurrentSnippet]);
 
-  const marginRight = 8;
-  const marginBottom = 8;
-
   const showEditorDialog = () => {
     setEditor({ ...editor, show: true });
     setDraft(snippet2draft(snippet));
@@ -77,9 +79,19 @@ function Snippet() {
     if (snippet.Description !== newSnippet.Description) {
       setRenderedDescription(marked(newSnippet.Description));
     }
-    let [ok, message] = await updateSnippet(newSnippet);
+    const isNewSnippet = window.location.pathname === '/snippet';
+    console.log('isNewSnippet ', isNewSnippet);
+    let [ok, message] = await updateSnippet(newSnippet, isNewSnippet);
     toast(
       ok ? 'Snippet has been updated.' : message,
+      ok ? toastType.success : toastType.error
+    );
+  };
+
+  const deleteTargetSnippet = async () => {
+    let [ok, message] = await deleteSnippet(snippet.ID);
+    toast(
+      ok ? 'Snippet has been deleted.' : message,
       ok ? toastType.success : toastType.error
     );
   };
@@ -136,9 +148,7 @@ function Snippet() {
         <Button
           variant="contained"
           color="secondary"
-          onClick={() => {
-            // TODO: delete
-          }}
+          onClick={deleteTargetSnippet}
           style={{ marginRight, marginBottom }}
         >
           Delete Snippet
@@ -152,11 +162,19 @@ function Snippet() {
         </Button>
         <Button
           variant="contained"
-          color="primary"
           onClick={copy}
           style={{ marginRight, marginBottom }}
         >
           Copy Code
+        </Button>
+        <Button
+          variant="contained"
+          color="primary"
+          style={{ marginRight, marginBottom }}
+          component={Link}
+          to={'/snippet'}
+        >
+          New Snippet
         </Button>
       </div>
       <Paper style={{ padding: 16 }}>
