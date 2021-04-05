@@ -3,9 +3,7 @@ import Reducer from './reducers';
 import { toastType } from './utils/constant';
 
 const initialState = {
-  SettingDialog: {
-    open: false,
-  },
+  SettingDialog: false,
   Token: '',
   Setting: {
     username: '',

@@ -65,7 +65,7 @@ function Layout() {
         <Snippet />
       </main>
       <Dialog
-        open={state.SettingDialog.open}
+        open={state.SettingDialog}
         onClose={() => {
           dispatch({ type: 'SET_SETTING_DIALOG', payload: false });
         }}
