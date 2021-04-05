@@ -1,15 +1,18 @@
 package controller
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"net/http"
+	"snippet-manager/cache"
 	"snippet-manager/common"
 	"snippet-manager/model"
+	"sort"
 	"strings"
 )
 
-func getUserId(c *gin.Context) (id uuid.UUID, ok bool) {
+func getUserID(c *gin.Context) (id uuid.UUID, ok bool) {
 	// First check the cache.
 	value, ok := c.Get("id")
 	if ok {
@@ -32,7 +35,7 @@ func getUserId(c *gin.Context) (id uuid.UUID, ok bool) {
 
 // Pagination
 func GetSnippetsByUser(c *gin.Context) {
-	userId, ok := getUserId(c)
+	userId, ok := getUserID(c)
 	if !ok {
 		c.JSON(http.StatusOK, gin.H{
 			"code":    common.StatusInvalidParameter,
@@ -45,6 +48,7 @@ func GetSnippetsByUser(c *gin.Context) {
 			"code":    common.StatusError,
 			"message": err.Error(),
 		})
+		return
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"code":    common.StatusOk,
@@ -54,20 +58,27 @@ func GetSnippetsByUser(c *gin.Context) {
 }
 
 func GetSnippetsByTag(c *gin.Context) {
-	tag := c.Param("tag")
-	tag = strings.ToLower(tag)
-	tag += ","
-	var snippets []*model.Snippet
-	if err := model.DB.Where("tags LIKE ?", "%"+tag+"%").Order("updated_at desc").Find(&snippets).Error; err != nil {
+	userID, ok := getUserID(c)
+	if !ok {
+		c.JSON(http.StatusOK, gin.H{
+			"code":    common.StatusInvalidParameter,
+			"message": "unable to get your id",
+		})
+	}
+	tagID := c.Param("tagID")
+
+	var briefSnippets []*model.BriefSnippet
+	if err := model.DB.Table("tag_snippets").Where("tag_id", tagID).Where("tag_snippets.user_id", userID).Select("snippets.id, snippets.title").Joins("left join snippets on snippets.id = tag_snippets.snippet_id").Order("updated_at desc").Scan(&briefSnippets).Error; err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"code":    common.StatusError,
 			"message": err.Error(),
 		})
+		return
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"code":    common.StatusOk,
 		"message": "ok",
-		"data":    snippets,
+		"data":    briefSnippets,
 	})
 }
 
@@ -89,7 +100,7 @@ func GetSnippet(c *gin.Context) {
 }
 
 func CreateSnippet(c *gin.Context) {
-	userId, ok := getUserId(c)
+	userID, ok := getUserID(c)
 	if !ok {
 		c.JSON(http.StatusOK, gin.H{
 			"code":    common.StatusInvalidParameter,
@@ -104,11 +115,7 @@ func CreateSnippet(c *gin.Context) {
 		})
 		return
 	}
-	snippet.UserId = userId
-
-	if snippet.Tags != "" && !strings.HasSuffix(snippet.Tags, ",") {
-		snippet.Tags += ","
-	}
+	snippet.UserID = userID
 
 	if err := model.DB.Create(&snippet).Error; err != nil {
 		c.JSON(http.StatusOK, gin.H{
@@ -117,15 +124,28 @@ func CreateSnippet(c *gin.Context) {
 		})
 		return
 	}
+	message := "ok"
+	for _, tag := range strings.Split(snippet.Tags, " ") {
+		if tagId, ok := cache.GetTagID(userID, tag); ok {
+			tagSnippet := model.TagSnippet{
+				UserID:    userID,
+				SnippetID: snippet.ID,
+				TagID:     tagId,
+			}
+			if err := model.DB.FirstOrCreate(&tagSnippet).Error; err != nil {
+				message = err.Error()
+			}
+		}
+	}
 	c.JSON(http.StatusOK, gin.H{
 		"code":    common.StatusOk,
-		"message": "ok",
+		"message": message,
 		"data":    gin.H{"snippet": snippet},
 	})
 }
 
 func UpdateSnippet(c *gin.Context) {
-	userId, ok := getUserId(c)
+	userID, ok := getUserID(c)
 	if !ok {
 		c.JSON(http.StatusOK, gin.H{
 			"code":    common.StatusInvalidParameter,
@@ -141,17 +161,52 @@ func UpdateSnippet(c *gin.Context) {
 		return
 	}
 	oldSnippet := &model.Snippet{}
-	if err := model.DB.Where("id = ?", newSnippet.ID).Where("user_id", userId).First(oldSnippet).Error; err != nil {
+	if err := model.DB.Where("id = ?", newSnippet.ID).Where("user_id", userID).First(oldSnippet).Error; err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"code":    common.StatusRecordNotFound,
 			"message": "record not found",
 		})
 		return
 	}
-	newSnippet.UserId = userId
-	if newSnippet.Tags != "" && !strings.HasSuffix(newSnippet.Tags, ",") {
-		newSnippet.Tags += ","
+
+	// Check if tags are changed.
+	if oldSnippet.Tags != newSnippet.Tags {
+		oldTags := strings.Split(oldSnippet.Tags, " ")
+		newTags := strings.Split(newSnippet.Tags, " ")
+		sort.Strings(oldTags)
+		sort.Strings(newTags)
+		for i := 0; i < len(oldTags) || i < len(newTags); i++ {
+			if i < len(oldTags) && i < len(newTags) {
+				if oldTags[i] == newTags[i] {
+					continue
+				}
+			}
+			// Delete abandoned tags.
+			if i < len(oldTags) {
+				if tagId, ok := cache.GetTagID(userID, oldTags[i]); ok {
+					if err := model.DB.Where("snippet_id", oldSnippet.ID).Where("tag_id", tagId).Delete(model.TagSnippet{}).Error; err != nil {
+						fmt.Print(err)
+					}
+				}
+			}
+			// Create new added tags.
+			if i < len(newTags) {
+				if tagId, ok := cache.GetTagID(userID, newTags[i]); ok {
+					tagSnippet := model.TagSnippet{
+						UserID:    userID,
+						SnippetID: oldSnippet.ID,
+						TagID:     tagId,
+					}
+					if err := model.DB.FirstOrCreate(&tagSnippet).Error; err != nil {
+						fmt.Println(err)
+					}
+				}
+			}
+
+		}
 	}
+
+	newSnippet.UserID = userID
 	if err := model.DB.Save(newSnippet).Error; err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"code":    common.StatusError,
@@ -168,7 +223,7 @@ func UpdateSnippet(c *gin.Context) {
 
 func DeleteSnippet(c *gin.Context) {
 	id := c.Param("id")
-	userId, ok := getUserId(c)
+	userID, ok := getUserID(c)
 	if !ok {
 		c.JSON(http.StatusOK, gin.H{
 			"code":    common.StatusInvalidParameter,
@@ -176,14 +231,17 @@ func DeleteSnippet(c *gin.Context) {
 		})
 	}
 	oldSnippet := &model.Snippet{}
-	if err := model.DB.Where("id = ?", id).Where("user_id", userId).First(oldSnippet).Error; err != nil {
+	if err := model.DB.Where("id = ?", id).Where("user_id", userID).First(oldSnippet).Error; err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"code":    common.StatusRecordNotFound,
 			"message": "record not found",
 		})
 		return
 	}
-	if err := model.DB.Unscoped().Delete(oldSnippet).Error; err != nil {
+	if err := model.DB.Where("snippet_id", oldSnippet.ID).Delete(model.TagSnippet{}).Error; err != nil {
+		fmt.Print(err)
+	}
+	if err := model.DB.Delete(oldSnippet).Error; err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"code":    common.StatusError,
 			"message": err.Error(),
@@ -205,6 +263,7 @@ func SearchSnippet(c *gin.Context) {
 			"code":    common.StatusError,
 			"message": err.Error(),
 		})
+		return
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"code":    common.StatusOk,

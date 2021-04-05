@@ -6,17 +6,21 @@ import (
 )
 
 type Snippet struct {
-	gorm.Model
-	ID          uuid.UUID
-	UserId      uuid.UUID
+	ID          uuid.UUID `gorm:"primaryKey"`
+	UserID      uuid.UUID
 	Language    string
 	Code        string
 	Title       string
-	Tags        string // Spilt by "," without space.
+	Tags        string
 	Description string
 }
 
 func (s *Snippet) BeforeCreate(*gorm.DB) (err error) {
 	s.ID = uuid.New()
 	return
+}
+
+type BriefSnippet struct {
+	ID    uuid.UUID
+	Title string
 }

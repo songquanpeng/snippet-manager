@@ -6,9 +6,13 @@ import (
 )
 
 type Tag struct {
-	gorm.Model
-	ID          uuid.UUID
+	ID          uuid.UUID `gorm:"primaryKey"`
 	UserID      uuid.UUID
 	Text        string `gorm:"unique"`
 	Description string
+}
+
+func (t *Tag) BeforeCreate(*gorm.DB) (err error) {
+	t.ID = uuid.New()
+	return
 }
