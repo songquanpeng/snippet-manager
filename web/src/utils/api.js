@@ -1,7 +1,6 @@
 import axios from 'axios';
-import { statusCode } from './constant';
+import { statusCode, toastType } from './constant';
 import { sleep } from './utils';
-import { toastType } from './constant';
 
 let api;
 
@@ -94,4 +93,43 @@ export const refreshSnippetList = async (state, dispatch) => {
     console.error(e);
     return [false, `Failed to refresh snippet list: ${e.message}.`];
   }
+};
+
+export const getSnippet = async (state) => {
+  while (!api) {
+    // TODO: waiting for state be initialized.
+    await sleep(50);
+  }
+  let id = state.CurrentSnippet;
+  if (id !== '') {
+    try {
+      let res = await api.get(`/snippet/${id}`);
+      let data = res.data;
+      if (data.code === statusCode.statusOk) {
+        return [true, data.data.snippet];
+      } else {
+        console.error(`Failed to fetch snippet: ${data.message}.`);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }
+  return [false, undefined];
+};
+
+export const updateSnippet = async (snippet) => {
+  let ok = false;
+  let message = '';
+  try {
+    let res = await api.put(`/snippet`, snippet);
+    let data = res.data;
+    if (data.code === statusCode.statusOk) {
+      ok = true;
+    }
+    message = data.message;
+  } catch (e) {
+    console.error(e);
+    message = e;
+  }
+  return [ok, message];
 };

@@ -25,7 +25,6 @@ export default function SnippetList() {
 
   useEffect(() => {
     if (state.TagList.length !== 0) {
-      console.log('called yes', state);
       (async () => {
         let [ok, message] = await refreshSnippetList(state, dispatch);
         if (!ok) {
