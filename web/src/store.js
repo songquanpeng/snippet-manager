@@ -18,6 +18,8 @@ const initialState = {
     duration: 5000,
     type: toastType.info,
   },
+  TagList: [],
+  SnippetList: [],
 };
 
 const Store = ({ children }) => {

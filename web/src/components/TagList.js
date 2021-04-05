@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -8,7 +8,10 @@ import CodeIcon from '@material-ui/icons/Code';
 import Drawer from '@material-ui/core/Drawer';
 import Toolbar from '@material-ui/core/Toolbar';
 import { Link } from 'react-router-dom';
-import { style } from '../utils/constant';
+import { style, toastType } from '../utils/constant';
+import { Context } from '../store';
+import { loadSetting } from '../utils/setting';
+import { Api, refreshTagList } from '../utils/api';
 
 const drawerWidth = style.tagListWidth;
 
@@ -25,15 +28,26 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-let tags = [
-  { text: 'C++', link: 'Cpp' },
-  { text: 'Java', link: 'Java' },
-  { text: 'Python', link: 'Python' },
-  { text: 'JavaScript', link: 'JavaScript' },
-  { text: 'Go', link: 'Go' },
-];
-
 export default function TagList() {
+  const [state, dispatch] = useContext(Context);
+
+  useEffect(() => {
+    if (state.Setting.username !== '') {
+      (async () => {
+        let [ok, message] = await refreshTagList(state, dispatch);
+        if (!ok) {
+          dispatch({
+            type: 'SHOW_TOAST',
+            payload: {
+              message,
+              type: toastType.error,
+            },
+          });
+        }
+      })();
+    }
+  }, [state.Setting]);
+
   const classes = useStyles();
 
   return (
@@ -47,17 +61,17 @@ export default function TagList() {
       <Toolbar />
       <div className={classes.drawerContainer}>
         <List>
-          {tags.map((tag, index) => (
+          {state.TagList.map((tag, index) => (
             <ListItem
               button
-              key={tag.link}
+              key={tag.Text}
               component={Link}
-              to={`/tag/${tag.link}`}
+              to={`/tag/${tag.Text}`}
             >
               <ListItemIcon>
                 <CodeIcon />
               </ListItemIcon>
-              <ListItemText primary={tag.text} />
+              <ListItemText primary={tag.Text} />
             </ListItem>
           ))}
         </List>

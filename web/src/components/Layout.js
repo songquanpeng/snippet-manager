@@ -18,7 +18,7 @@ import useSettingForm from '../hooks/settingForm';
 import { Context } from '../store';
 
 import { loadSetting, saveSetting } from '../utils/setting';
-import { refreshToken } from '../utils/token';
+import { Api, refreshToken } from '../utils/api';
 import Toast from './Toast';
 import { toastType } from '../utils/constant';
 
@@ -46,8 +46,12 @@ function Layout() {
 
   // After the state is changed, update setting.
   useEffect(() => {
-    setSetting(state.Setting);
-  }, [state]);
+    // TODO: Looks like this useEffect will be called on initialized
+    if (state.Setting.username !== '') {
+      setSetting(state.Setting);
+      Api(state, dispatch);
+    }
+  }, [state.Setting]);
 
   const classes = useStyles();
   return (
@@ -103,7 +107,10 @@ function Layout() {
         <DialogActions>
           <Button
             onClick={async () => {
-              let [success, message] = await refreshToken(setting, dispatch);
+              let [success, message, _] = await refreshToken(
+                { Setting: setting },
+                dispatch
+              );
               let type = toastType.error;
               if (success) {
                 message = 'Your setting is okay.';

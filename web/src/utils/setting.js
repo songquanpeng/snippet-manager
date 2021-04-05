@@ -13,7 +13,6 @@ export function loadSetting(dispatch) {
         server,
       },
     });
-    console.log('Setting is loaded.');
   }
 }
 
