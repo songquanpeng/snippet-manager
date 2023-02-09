@@ -3,13 +3,12 @@ module snippet-manager
 go 1.15
 
 require (
-	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
-	github.com/gin-contrib/cors v1.3.1 // indirect
-	github.com/gin-gonic/contrib v0.0.0-20201101042839-6a891bf89f19 // indirect
-	github.com/gin-gonic/gin v1.6.3
-	github.com/go-playground/validator/v10 v10.4.1 // indirect
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
+	github.com/gin-contrib/cors v1.3.1
+	github.com/gin-gonic/contrib v0.0.0-20201101042839-6a891bf89f19
+	github.com/gin-gonic/gin v1.7.7
 	github.com/golang/protobuf v1.4.3 // indirect
-	github.com/google/uuid v1.2.0 // indirect
+	github.com/google/uuid v1.2.0
 	github.com/json-iterator/go v1.1.10 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/mattn/go-sqlite3 v1.14.6 // indirect
@@ -20,6 +19,6 @@ require (
 	golang.org/x/sys v0.0.0-20210124154548-22da62e12c0c // indirect
 	google.golang.org/protobuf v1.25.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
-	gorm.io/driver/sqlite v1.1.4 // indirect
-	gorm.io/gorm v1.20.12 // indirect
+	gorm.io/driver/sqlite v1.1.4
+	gorm.io/gorm v1.20.12
 )
